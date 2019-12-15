@@ -1,0 +1,279 @@
+﻿1>
+	Result_H	EQU	20H
+	Result_L	EQU	21H
+	
+	ORG	0000H
+	MOV	Result_H,#00
+	MOV	Result_L,#00
+	
+	MOV	A,R0
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R1
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R2
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R3
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R4
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R5
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R6
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,R7
+	CLR	C
+	ADDC	A,Result_L
+	DA	A
+	MOV	Result_L,A
+	MOV	A,#00
+	ADDC	A,Result_H
+	DA	A
+	MOV	Result_H,A
+	
+	MOV	A,Result_H
+	MOV	40H,A
+	MOV	A,Result_L
+	MOV	41H,A
+	
+	JMP	$
+	END 
+
+2>
+	HResult	EQU	20H
+	LResult	EQU	21H
+	ORG	0000H
+	MOV	HResult,#00
+	MOV	LResult,#00
+	MOV	R1,B
+	INC	R1
+	MOV	A,#00
+	MOV	R2,#00
+
+LOOP:	CLR	C
+	MOV	A,R2
+	ADDC	A,LResult
+	MOV	LResult,A
+	
+	MOV	A,#00
+	ADDC	A,HResult	
+	MOV	HResult,A
+	INC	R2
+	DJNZ	R1,LOOP
+	SJMP	$
+	END
+
+3>
+	HResult	EQU	20H
+	LResult	EQU	21H
+	ORG	0000H
+	MOV	HResult,#00
+	MOV	LResult,#00
+	MOV	R1,B
+	MOV	A,#00
+
+LOOP:	CLR	C
+	MOV	A,R1
+	ADDC	A,LResult
+	MOV	LResult,A
+	
+	MOV	A,#00
+	ADDC	A,HResult	
+	MOV	HResult,A
+	INC	R1
+	CJNE	R1,#0FFH,LOOP
+	
+	CLR	C
+	MOV	A,R1
+	ADDC	A,LResult
+	MOV	LResult,A
+	
+	MOV	A,#00
+	ADDC	A,HResult	
+	MOV	HResult,A
+	SJMP	$
+	END
+
+4>
+	MyData	EQU	20H
+	
+	ORG	0000H
+	MOV	MyData,#00
+	MOV	R7,#00
+	MOV	A,B
+	
+	MOV	MyData,A
+	CALL	COUNT1
+	JMP	$
+	
+COUNT1:	MOV	R6,#8
+	
+_XLOOP:	MOV	A,MyData
+	RL	A
+	MOV	MyData,A
+	MOV	C,MyData.0
+	MOV	A,R7
+	ADDC	A,#00
+	DA	A
+	MOV	R7,A
+	DJNZ	R6,_XLOOP
+	RET	
+	END
+
+5>
+	MyData	EQU	20H
+	
+	ORG	0000H
+	MOV	MyData,#00
+	MOV	B,#00
+	
+	MOV	A,DPH
+	CPL	A
+	MOV	MyData,A
+	CALL	COUNT1
+	
+	MOV	A,DPL
+	CPL	A
+	MOV	MyData,A
+	CALL	COUNT1
+	JMP	$
+	
+COUNT1:	MOV	R6,#8
+	
+_XLOOP:	MOV	A,MyData
+	RLC	A
+	MOV	MyData,A
+	MOV	A,B
+	ADDC	A,#00
+	DA	A
+	MOV	B,A
+	DJNZ	R6,_XLOOP
+	RET	
+	END
+
+6>
+	MyData	EQU	20H
+	HResult EQU	21H
+	LResult	EQU	22H
+	
+	ORG	0000H
+	MOV	R0,#40H
+	MOV	R2,#40H
+	
+	MOV	MyData,#00
+	MOV	HResult,#00
+	MOV	LResult,#00
+	
+LOOP:	MOV	A,@R0
+	MOV	MyData,A
+	CALL	COUNT1
+	INC	R0
+	DJNZ	R2,LOOP
+	
+	MOV	DPTR,#9000H
+	MOV	A,HResult
+	MOVX	@DPTR,A
+	
+	MOV	DPTR,#9001H
+	MOV	A,LResult
+	MOVX	@DPTR,A
+	JMP	$
+	
+COUNT1:	MOV	R6,#8
+	
+_XLOOP:	MOV	A,MyData
+	RLC	A
+	MOV	MyData,A
+	
+	MOV	A,LResult
+	ADDC	A,#00
+	DA	A
+	MOV	LResult,A
+	
+	MOV	A,HResult
+	ADDC	A,#00
+	DA	A
+	MOV	HResult,A
+	DJNZ	R6,_XLOOP
+	RET	
+	END
+
+7>
+	MIN	EQU	20H
+	ORG	0000H
+	MOV	MIN,#0FFH
+	MOV	R0,#80H
+	MOV	R6,#80H
+	
+LOOP:	CLR	C
+	MOV	A,@R0
+	SUBB	A,MIN
+	JNC	SKIP
+	
+N_MIN:	MOV	A,@R0
+	MOV	MIN,A
+	MOV	B,@R0
+	MOV	A,R0
+	MOV	R7,A
+		
+SKIP:	INC	R0
+	DJNZ	R6,LOOP
+	
+	JMP	$
+	END
+=======================================================================
